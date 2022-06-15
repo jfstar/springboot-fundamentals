@@ -1,10 +1,13 @@
 package com.fundamentosplatzi.springboot.fundamentos.configuration;
 
 import com.fundamentosplatzi.springboot.fundamentos.bean.*;
-import com.fundamentosplatzi.springboot.fundamentos.repository.UserRepository;
-import com.fundamentosplatzi.springboot.fundamentos.repository.UserRepositoryImplement;
+import com.fundamentosplatzi.springboot.fundamentos.repository.UserBeanRepository;
+import com.fundamentosplatzi.springboot.fundamentos.repository.UserBeanRepositoryImplement;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class MyConfigurationBean {
@@ -26,10 +29,12 @@ public class MyConfigurationBean {
     }
 
     @Bean
-    public UserRepository userRepository(){ return  new UserRepositoryImplement();  }
+    public UserBeanRepository UserBeanRepository(){ return  new UserBeanRepositoryImplement();  }
 
     @Bean
-    public User UserWithDependecy(UserRepository userRepository){
-        return new User(userRepository);
+    public UserBean UserWithDependecy(UserBeanRepository userBeanRepository){
+        return new UserBean(userBeanRepository);
     }
+
+
 }

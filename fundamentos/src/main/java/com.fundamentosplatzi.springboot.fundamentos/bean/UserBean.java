@@ -1,15 +1,15 @@
 package com.fundamentosplatzi.springboot.fundamentos.bean;
 
-import com.fundamentosplatzi.springboot.fundamentos.repository.UserRepository;
+import com.fundamentosplatzi.springboot.fundamentos.repository.UserBeanRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class User implements UserImplement{
-    Log LOGGER = LogFactory.getLog(User.class);
-    UserRepository userRepository;
+public class UserBean implements UserImplement{
+    Log LOGGER = LogFactory.getLog(UserBean.class);
+    UserBeanRepository userBeanRepository;
 
-    public User(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserBean(UserBeanRepository userBeanRepository) {
+        this.userBeanRepository = userBeanRepository;
     }
 
     @Override
@@ -17,7 +17,7 @@ public class User implements UserImplement{
         System.out.printf("Estoy insertando desde mi Bean");
         String msj = "mi nuevo Bean";
         LOGGER.error("Esto es un error desde el insert ");
-        userRepository.conexion_BD(msj);
+        userBeanRepository.conexion_BD(msj);
     }
 
     @Override
