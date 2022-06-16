@@ -8,8 +8,10 @@ import com.fundamentosplatzi.springboot.fundamentos.component.ComponentDependenc
 import com.fundamentosplatzi.springboot.fundamentos.entity.User;
 import com.fundamentosplatzi.springboot.fundamentos.pojo.UserPojo;
 import com.fundamentosplatzi.springboot.fundamentos.repository.UserRepository;
+import com.fundamentosplatzi.springboot.fundamentos.service.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -38,6 +40,9 @@ public class FundamentosApplication implements CommandLineRunner {
 	private UserPojo userPojo;
 
 	private UserRepository userRepository;
+
+	private UserService userService;
+	@Autowired
 	public FundamentosApplication(@Qualifier("componentTwoImplement") ComponentDependency componentDependency
 			, MyBean myBean
 	 		, MyBeanWithDepedency myBeanWithDepedency
@@ -45,6 +50,7 @@ public class FundamentosApplication implements CommandLineRunner {
 			, MyBeanWithProperties myBeanWithProperties
 			, UserPojo userPojo
 		    , UserRepository userRepository
+			, UserService userService
 	) {
 		this.componentDependency = componentDependency;
 		this.myBean = myBean;
@@ -53,6 +59,7 @@ public class FundamentosApplication implements CommandLineRunner {
 		this.myBeanWithProperties = myBeanWithProperties;
 		this.userPojo = userPojo;
 		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 
@@ -64,8 +71,29 @@ public class FundamentosApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		//otrasClases();
-		registroBD();
-		queryJPQE();
+		//registroBD();
+		//queryJPQE();
+		saveWithErrorTransactional();
+	}
+
+	private void saveWithErrorTransactional()
+	{
+		User test1 = new User("test1","test1@domain.com", LocalDate.now());
+		User test2 = new User("test2","test2@domain.com", LocalDate.now());
+		User test3 = new User("test3","test3@domain.com", LocalDate.now());
+		User test4 = new User("test4","test4@domain.com", LocalDate.now());
+		User test5 = new User("test5","test5@domain.com", LocalDate.now());
+		List<User> list = Arrays.asList(test1, test2, test3, test4, test5);
+
+		try {
+			userService.saveTransactional(list);
+		}catch(Exception Ex)
+		{
+			LOGGER.error("Función:saveWithErrorTransactional, Excepción Capturada "+ Ex);
+		}
+
+		userService.getAllUsers().stream()
+				.forEach(user -> LOGGER.info("Este es el usuario dentro del método transaccional "+ user));
 	}
 
 	public void queryJPQE()
@@ -93,7 +121,7 @@ public class FundamentosApplication implements CommandLineRunner {
 				.stream()
 				.forEach(user -> LOGGER.info("findByNameOrEmail User:\t " + user));*/
 
-		userRepository.findBybirthdateBetween(LocalDate.of(2020,01,01), LocalDate.of(2022,12,31))
+		/*userRepository.findBybirthdateBetween(LocalDate.of(2020,01,01), LocalDate.of(2022,12,31))
 				.stream()
 				.forEach(user -> LOGGER.info("findByBirthDateBetween User: "+user) );
 
@@ -117,22 +145,26 @@ public class FundamentosApplication implements CommandLineRunner {
 		List<String> emails = Arrays.asList("pe@gmail.com", "ana@gmail.com", "miguel@gmail.com");
 		userRepository.findByEmailNotInOrderByIdDesc(emails)
 			.stream()
-			.forEach(user -> LOGGER.info("findByEmailNotInOrderByIdDesc Usuario: " + user));
+			.forEach(user -> LOGGER.info("findByEmailNotInOrderByIdDesc Usuario: " + user));*/
+
+		LOGGER.info("<<getAllByBirthDateAndEmail>> Usuario encontrado con Named Parameter: "
+				+userRepository.getAllByBirthDateAndEmail(LocalDate.of(2020, 01,15), "jfcs@gmail.com")
+				.orElseThrow( ()-> new RuntimeException("No se encontró el usuario a partir del named parametred")));
 
 	}
 
 	public void registroBD()
 	{
-		User user1 = new User("JFCS", "jfcs@gmail.com", LocalDate.of(2021, 01,15));
-		User user2 = new User("Juan", "juan@gmail.com", LocalDate.of(2021, 01,15));
-		User user3 = new User("Miguel", "miguel@gmail.com", LocalDate.of(2021, 01,15));
-		User user4 = new User("Ana", "ana@gmail.com", LocalDate.of(2021, 01,15));
-		User user5 = new User("Maria", "maria@gmail.com", LocalDate.of(2021, 01,15));
-		User user6 = new User("user", "pe@gmail.com", LocalDate.of(2021, 01,15));
-		User user7 = new User("user1", "pe@gmail.com", LocalDate.of(2021, 01,15));
-		User user8 = new User("user2", "pe@gmail.com", LocalDate.of(2021, 01,15));
-		User user9 = new User("user3", "ramon@gmail.com", LocalDate.of(2021, 01,15));
-		User user10 = new User("user4", "kenia@gmail.com", LocalDate.of(2021, 01,15));
+		User user1 = new User("JFCS", "jfcs@gmail.com", LocalDate.of(2020, 01,15));
+		User user2 = new User("Juan", "juan@gmail.com", LocalDate.of(2018, 01,15));
+		User user3 = new User("Miguel", "miguel@gmail.com", LocalDate.of(2017, 01,15));
+		User user4 = new User("Ana", "ana@gmail.com", LocalDate.of(2011, 01,15));
+		User user5 = new User("Maria", "maria@gmail.com", LocalDate.of(2011, 01,15));
+		User user6 = new User("user", "pe@gmail.com", LocalDate.of(2014, 01,15));
+		User user7 = new User("user1", "pe@gmail.com", LocalDate.of(2013, 01,15));
+		User user8 = new User("user2", "pe@gmail.com", LocalDate.of(2012, 01,15));
+		User user9 = new User("user3", "ramon@gmail.com", LocalDate.of(2011, 01,15));
+		User user10 = new User("user4", "kenia@gmail.com", LocalDate.of(2010, 01,15));
 
 		//userRepository.save(user1);
 		//list.forEach(userRepository::save);

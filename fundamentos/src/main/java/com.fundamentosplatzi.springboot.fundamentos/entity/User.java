@@ -18,14 +18,14 @@ public class User {
     @Column(length = 50)
     private String name;
 
-    @Column( length = 50)
+    @Column( length = 50, unique = true)
     private String email;
 
     private LocalDate birthdate;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
-    private List<Post> Post = new ArrayList<>();
+    private List<Post> post = new ArrayList<>();
 
     public User() {
     }
@@ -68,12 +68,12 @@ public class User {
         this.birthdate = birthdate;
     }
 
-    public List<com.fundamentosplatzi.springboot.fundamentos.entity.Post> getPost() {
-        return Post;
+    public List<Post> getPost() {
+        return post;
     }
 
-    public void setPost(List<com.fundamentosplatzi.springboot.fundamentos.entity.Post> post) {
-        Post = post;
+    public void setPost(List<Post> post) {
+        this.post = post;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", birthdate=" + birthdate +
-                ", Post=" + Post +
+                ", Post=" + post +
                 '}';
     }
 }
